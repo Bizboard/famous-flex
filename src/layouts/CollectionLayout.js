@@ -277,7 +277,7 @@ define(function(require, exports, module) {
         while (offset < bound) {
             node = context.next();
             if (!node) {
-                if(lineNodes[0]){
+                if(lineNodes.length === 1){
                     leftSingleNodeOnTop = lineNodes[0].node;
                 } else {
                     _layoutLine(true, true)
@@ -312,7 +312,7 @@ define(function(require, exports, module) {
             if(leftSingleNodeOnTop && lineNodes.length){
                 node = leftSingleNodeOnTop;
             } else {
-                node = context.prev();
+                node = context.prev() || leftSingleNodeOnTop;
             }
             if (!node) {
                 _layoutLine(false, true);
