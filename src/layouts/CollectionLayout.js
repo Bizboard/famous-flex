@@ -187,6 +187,29 @@ define(function(require, exports, module) {
 
         // Prepare
         context = context_;
+
+        if(context.scrollTopHeight){
+            context.set('topScroller', {
+                translate: [0, 0, 0],
+                opacity: 0,
+                size: [0,context.scrollTopHeight]
+            });
+        }
+
+        if(context.scrollLength){
+            context.set('bottomScroller', {
+                translate: [0, 0, 0],
+                opacity: 0,
+                size: [10,context.scrollLength + margins[alignment + 2]],
+                origin: [0, 0]
+            });
+        }
+
+        if (offset < context.scrollStart) {
+            /* We scrolled down so that the start sequence changed */
+            context.moveStartSequence(true);
+        }
+
         size = context.size;
         direction = context.direction;
         alignment = context.alignment;
@@ -212,6 +235,7 @@ define(function(require, exports, module) {
         var nodeSize;
         var lineOffset;
         var bound;
+        var maxOffset, minOffset;
 
         //
         // Prepare item-size
@@ -245,46 +269,78 @@ define(function(require, exports, module) {
         //
         // Process all next nodes
         //
-        offset = context.scrollOffset + margin[alignment] + (alignment ? spacing[direction] : 0);
+        offset = maxOffset = context.scrollOffset + margin[alignment] + (alignment ? spacing[direction] : 0);
         bound = context.scrollEnd + (alignment ? 0 : margin[alignment]);
         lineOffset = 0;
         lineNodes = [];
+        var leftSingleNodeOnTop = null;
         while (offset < bound) {
             node = context.next();
             if (!node) {
-                _layoutLine(true, true);
+                if(lineNodes[0]){
+                    leftSingleNodeOnTop = lineNodes[0].node;
+                } else {
+                    _layoutLine(true, true)
+                }
                 break;
             }
             nodeSize = _resolveNodeSize(node);
             lineOffset += (lineNodes.length ? spacing[lineDirection] : 0) + nodeSize[lineDirection];
             if ((Math.round(lineOffset * 100) / 100) > lineLength) {
                 offset += _layoutLine(true, !node);
+                maxOffset = offset;
                 lineOffset = nodeSize[lineDirection];
             }
+
+            if (offset < context.scrollStart) {
+                /* We scrolled down so that the start sequence changed */
+                context.moveStartSequence(true);
+            }
+
             lineNodes.push({node: node, size: nodeSize});
         }
 
         //
         // Process previous nodes
         //
-        offset = context.scrollOffset + margin[alignment] - (alignment ? 0 : spacing[direction]);
+        offset = minOffset = context.scrollOffset + margin[alignment] - (alignment ? 0 : spacing[direction]);
         bound = context.scrollStart + (alignment ? margin[alignment] : 0);
         lineOffset = 0;
         lineNodes = [];
+        var didLoopOnce = false;
         while (offset > bound) {
-            node = context.prev();
+            if(leftSingleNodeOnTop && lineNodes.length){
+                node = leftSingleNodeOnTop;
+            } else {
+                node = context.prev();
+            }
             if (!node) {
                 _layoutLine(false, true);
                 break;
             }
+            didLoopOnce = true;
+
+            if(offset > context.scrollEnd) {
+                context.moveStartSequence(false);
+            }
+
             nodeSize = _resolveNodeSize(node);
             lineOffset += (lineNodes.length ? spacing[lineDirection] : 0) + nodeSize[lineDirection];
             if ((Math.round(lineOffset * 100) / 100) > lineLength) {
                 offset -= _layoutLine(false, !node);
+                minOffset = offset;
                 lineOffset = nodeSize[lineDirection];
             }
-            lineNodes.unshift({node: node, size: nodeSize});
+            var newDataToAdd = {node: node, size: nodeSize};
+            /* If we are adding a missing piece from the "next"-rendering, it should be added to the end of the row, rather than to the beginning */
+            if(leftSingleNodeOnTop && lineNodes.length) {
+                lineNodes.push(newDataToAdd);
+                leftSingleNodeOnTop = null;
+            } else {
+                lineNodes.unshift(newDataToAdd);
+            }
         }
+        context.setCoveredScrollHeight(maxOffset - minOffset);
     }
 
     CollectionLayout.Capabilities = capabilities;
