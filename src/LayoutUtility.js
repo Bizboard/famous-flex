@@ -19,7 +19,7 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var Utility = require('famous/utilities/Utility');
+    var Utility = require('arva-js/famous/utilities/Utility');
 
     /**
      * @class

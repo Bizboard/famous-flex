@@ -54,7 +54,7 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var EventHandler = require('famous/core/EventHandler');
+    var EventHandler = require('arva-js/famous/core/EventHandler');
 
     /**
      * @class

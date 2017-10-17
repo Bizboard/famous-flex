@@ -43,18 +43,18 @@ define(function(require, exports, module) {
     var LayoutNode = require('./LayoutNode');
     var FlowLayoutNode = require('./FlowLayoutNode');
     var LayoutNodeManager = require('./LayoutNodeManager');
-    var ContainerSurface = require('famous/surfaces/ContainerSurface');
-    var Transform = require('famous/core/Transform');
-    var EventHandler = require('famous/core/EventHandler');
-    var Group = require('famous/core/Group');
-    var Engine = require('famous/core/Engine');
-    var NativeScrollGroup = require('famous/core/NativeScrollGroup');
-    var Vector = require('famous/math/Vector');
-    var PhysicsEngine = require('famous/physics/PhysicsEngine');
-    var Particle = require('famous/physics/bodies/Particle');
-    var Drag = require('famous/physics/forces/Drag');
-    var Spring = require('famous/physics/forces/Spring');
-    var ScrollSync = require('famous/inputs/ScrollSync');
+    var ContainerSurface = require('arva-js/famous/surfaces/ContainerSurface');
+    var Transform = require('arva-js/famous/core/Transform');
+    var EventHandler = require('arva-js/famous/core/EventHandler');
+    var Group = require('arva-js/famous/core/Group');
+    var Engine = require('arva-js/famous/core/Engine');
+    var NativeScrollGroup = require('arva-js/famous/core/NativeScrollGroup');
+    var Vector = require('arva-js/famous/math/Vector');
+    var PhysicsEngine = require('arva-js/famous/physics/PhysicsEngine');
+    var Particle = require('arva-js/famous/physics/bodies/Particle');
+    var Drag = require('arva-js/famous/physics/forces/Drag');
+    var Spring = require('arva-js/famous/physics/forces/Spring');
+    var ScrollSync = require('arva-js/famous/inputs/ScrollSync');
     var LinkedListViewSequence = require('./LinkedListViewSequence');
 
     /**

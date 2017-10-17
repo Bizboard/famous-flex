@@ -16,7 +16,7 @@
 define(function (require, exports, module) {
 
     // import dependencies
-    var Transform = require('famous/core/Transform');
+    var Transform = require('arva-js/famous/core/Transform');
     var LayoutUtility = require('./LayoutUtility');
 
     /**

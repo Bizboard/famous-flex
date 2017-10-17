@@ -29,8 +29,8 @@ define(function(require, exports, module) {
     var LayoutContext = require('./LayoutContext');
     var Map = require('es6-map');
     var LayoutUtility = require('./LayoutUtility');
-    var Surface = require('famous/core/Surface');
-    var RenderNode = require('famous/core/RenderNode');
+    var Surface = require('arva-js/famous/core/Surface');
+    var RenderNode = require('arva-js/famous/core/RenderNode');
     var FlowLayoutNode = require('./FlowLayoutNode.js');
     var LayoutNode = require('./LayoutNode.js');
 

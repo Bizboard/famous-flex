@@ -16,16 +16,16 @@
 define(function (require, exports, module) {
 
     // import dependencies
-    var OptionsManager = require('famous/core/OptionsManager');
-    var Transform = require('famous/core/Transform');
-    var Engine = require('famous/core/Engine');
-    var Vector = require('famous/math/Vector');
-    var Particle = require('famous/physics/bodies/Particle');
-    var Spring = require('famous/physics/forces/Spring');
-    var PhysicsEngine = require('famous/physics/PhysicsEngine');
+    var OptionsManager = require('arva-js/famous/core/OptionsManager');
+    var Transform = require('arva-js/famous/core/Transform');
+    var Engine = require('arva-js/famous/core/Engine');
+    var Vector = require('arva-js/famous/math/Vector');
+    var Particle = require('arva-js/famous/physics/bodies/Particle');
+    var Spring = require('arva-js/famous/physics/forces/Spring');
+    var PhysicsEngine = require('arva-js/famous/physics/PhysicsEngine');
     var LayoutNode = require('./LayoutNode');
-    var Transitionable = require('famous/transitions/Transitionable');
-    var Easing = require('famous/transitions/Easing');
+    var Transitionable = require('arva-js/famous/transitions/Transitionable');
+    var Easing = require('arva-js/famous/transitions/Easing');
 
     /**
      * @class

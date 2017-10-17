@@ -28,18 +28,18 @@
 define(function (require, exports, module) {
 
     // import dependencies
-    var NativeScrollGroup = require('famous/core/NativeScrollGroup');
-    var Utility = require('famous/utilities/Utility');
-    var Entity = require('famous/core/Entity');
-    var ViewSequence = require('famous/core/ViewSequence');
+    var NativeScrollGroup = require('arva-js/famous/core/NativeScrollGroup');
+    var Utility = require('arva-js/famous/utilities/Utility');
+    var Entity = require('arva-js/famous/core/Entity');
+    var ViewSequence = require('arva-js/famous/core/ViewSequence');
     var LinkedListViewSequence = require('./LinkedListViewSequence');
-    var OptionsManager = require('famous/core/OptionsManager');
-    var EventHandler = require('famous/core/EventHandler');
+    var OptionsManager = require('arva-js/famous/core/OptionsManager');
+    var EventHandler = require('arva-js/famous/core/EventHandler');
     var LayoutUtility = require('./LayoutUtility');
     var LayoutNodeManager = require('./LayoutNodeManager');
     var LayoutNode = require('./LayoutNode');
     var FlowLayoutNode = require('./FlowLayoutNode');
-    var Transform = require('famous/core/Transform');
+    var Transform = require('arva-js/famous/core/Transform');
     require('./helpers/LayoutDockHelper');
 
     /**

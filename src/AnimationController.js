@@ -16,14 +16,14 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var View = require('famous/core/View');
+    var View = require('arva-js/famous/core/View');
     var LayoutController = require('./LayoutController');
-    var Transform = require('famous/core/Transform');
-    var Modifier = require('famous/core/Modifier');
-    var StateModifier = require('famous/modifiers/StateModifier');
-    var RenderNode = require('famous/core/RenderNode');
-    var Timer = require('famous/utilities/Timer');
-    var Easing = require('famous/transitions/Easing');
+    var Transform = require('arva-js/famous/core/Transform');
+    var Modifier = require('arva-js/famous/core/Modifier');
+    var StateModifier = require('arva-js/famous/modifiers/StateModifier');
+    var RenderNode = require('arva-js/famous/core/RenderNode');
+    var Timer = require('arva-js/famous/utilities/Timer');
+    var Easing = require('arva-js/famous/transitions/Easing');
 
     /**
      * @class

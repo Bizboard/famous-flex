@@ -52,10 +52,10 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var View = require('famous/core/View');
-    var Surface = require('famous/core/Surface');
-    var Utility = require('famous/utilities/Utility');
-    var ContainerSurface = require('famous/surfaces/ContainerSurface');
+    var View = require('arva-js/famous/core/View');
+    var Surface = require('arva-js/famous/core/Surface');
+    var Utility = require('arva-js/famous/utilities/Utility');
+    var ContainerSurface = require('arva-js/famous/surfaces/ContainerSurface');
     var LayoutController = require('../LayoutController');
     var ScrollController = require('../ScrollController');
     var WheelLayout = require('../layouts/WheelLayout');

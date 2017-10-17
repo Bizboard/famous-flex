@@ -64,8 +64,8 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var Surface = require('famous/core/Surface');
-    var View = require('famous/core/View');
+    var Surface = require('arva-js/famous/core/Surface');
+    var View = require('arva-js/famous/core/View');
     var LayoutController = require('../LayoutController');
     var TabBarLayout = require('../layouts/TabBarLayout');
 

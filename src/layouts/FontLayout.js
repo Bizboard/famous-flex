@@ -23,7 +23,7 @@
  * Example:
  *
  * ```javascript
- * var ContainerSurface = require('famous/surfaces/ContainerSurface');
+ * var ContainerSurface = require('arva-js/famous/surfaces/ContainerSurface');
  * var ScrollController = require('famous-flex/ScrollController');
  * var WheelLayout = require('famous-flex/layouts/WheelLayout');
  *
@@ -55,7 +55,7 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var Utility = require('famous/utilities/Utility');
+    var Utility = require('arva-js/famous/utilities/Utility');
 
     // Define capabilities of this layout function
     var capabilities = {

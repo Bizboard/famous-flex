@@ -16,9 +16,9 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var Timer = require('famous/utilities/Timer');
-    var Surface = require('famous/core/Surface');
-    var EventHandler = require('famous/core/EventHandler');
+    var Timer = require('arva-js/famous/utilities/Timer');
+    var Surface = require('arva-js/famous/core/Surface');
+    var EventHandler = require('arva-js/famous/core/EventHandler');
     var MSEC_PER_DAY = (1000 * 60 * 60 * 24);
 
     /**

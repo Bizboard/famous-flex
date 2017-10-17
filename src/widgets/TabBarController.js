@@ -16,12 +16,12 @@
 define(function(require, exports, module) {
 
     // import dependencies
-    var View = require('famous/core/View');
+    var View = require('arva-js/famous/core/View');
     var AnimationController = require('../AnimationController');
     var TabBar = require('./TabBar');
     var LayoutDockHelper = require('../helpers/LayoutDockHelper');
     var LayoutController = require('../LayoutController');
-    var Easing = require('famous/transitions/Easing');
+    var Easing = require('arva-js/famous/transitions/Easing');
 
     /**
      * @class
