@@ -273,12 +273,18 @@ define(function(require, exports, module) {
         bound = context.scrollEnd + (alignment ? 0 : margin[alignment]);
         lineOffset = 0;
         lineNodes = [];
+        var prevNode;
         var leftSingleNodeOnTop = null;
         while (offset < bound) {
             node = context.next();
             if (!node) {
                 if(lineNodes.length === 1){
-                    leftSingleNodeOnTop = lineNodes[0].node;
+                    prevNode = context.prev();
+                    if(!prevNode){
+                        _layoutLine(true, true)
+                    } else {
+                        leftSingleNodeOnTop = lineNodes[0].node;
+                    }
                 } else {
                     _layoutLine(true, true)
                 }
@@ -312,7 +318,8 @@ define(function(require, exports, module) {
             if(leftSingleNodeOnTop && lineNodes.length){
                 node = leftSingleNodeOnTop;
             } else {
-                node = context.prev() || leftSingleNodeOnTop;
+                node = prevNode || context.prev();
+                prevNode = null;
             }
             if (!node) {
                 _layoutLine(false, true);
