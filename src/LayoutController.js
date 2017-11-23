@@ -29,6 +29,7 @@ define(function (require, exports, module) {
 
     // import dependencies
     var NativeScrollGroup = require('famous/core/NativeScrollGroup');
+    var Group = require('famous/core/Group');
     var Utility = require('famous/utilities/Utility');
     var Entity = require('famous/core/Entity');
     var ViewSequence = require('famous/core/ViewSequence');
@@ -96,8 +97,16 @@ define(function (require, exports, module) {
         if (options.nativeScroll) {
             // Create groupt for faster rendering
             this.group = new NativeScrollGroup();
+        } else if (options.perspective){
+            this.group = new Group();
+            this.group.context.setPerspective(1000);
+        }
+
+        if(this.group){
             this.group.add({ render: this._innerRender.bind(this) });
         }
+
+
 
         // Layout
         this._layout = {
@@ -1072,7 +1081,7 @@ define(function (require, exports, module) {
         this._commitOutput.opacity = opacity;
         this._commitOutput.transform = transform;
 
-        if (this.options.nativeScroll) {
+        if (this.group) {
             // Return the spec
             return {
                 transform: transform,
