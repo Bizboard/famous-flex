@@ -244,7 +244,8 @@ define(function (require, exports, module) {
         skew: [0, 0, 0],
         rotate: [0, 0, 0],
         scale: [1, 1, 1],
-        translate: [0, 0, 0]
+        translate: [0, 0, 0],
+        opacity: [0]
     };
 
     /**
@@ -263,12 +264,14 @@ define(function (require, exports, module) {
 
         for(var property in propertiesWithDefaults){
             var defaultProperty = propertiesWithDefaults[property];
-            var tweenFrom = tweenFromSet[property] || defaultProperty;
-            var tweenTo = tweenToSet[property] || tweenFrom;
+            var tweenFrom = tweenFromSet[property] !== undefined ? tweenFromSet[property] : defaultProperty;
+            var tweenTo = tweenToSet[property] !== undefined ? tweenToSet[property] : tweenFrom;
             if(tweenTo === tweenFrom){
                 resultingSet[property] = tweenTo;
                 continue;
             }
+            tweenTo = Array.isArray(tweenTo) ? tweenTo : [tweenTo];
+            tweenFrom = Array.isArray(tweenFrom) ? tweenFrom: [tweenFrom];
             this._specModified = true;
             var numberOfDimensions = defaultProperty.length;
             /* Clone the property so that we can start from the default setting */
@@ -277,6 +280,7 @@ define(function (require, exports, module) {
                 tweenedSet[dimension] = tweenFrom[dimension] + (tweenTo[dimension] - tweenFrom[dimension]) * tweenValue;
             }
         }
+        resultingSet.opacity = resultingSet.opacity[0];
         return resultingSet;
     };
     /**
