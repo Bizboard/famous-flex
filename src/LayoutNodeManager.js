@@ -53,9 +53,10 @@ define(function(require, exports, module) {
             prev: _contextPrev.bind(this),
             get: _contextGet.bind(this),
             set: _contextSet.bind(this),
+            transition: _contextTransition.bind(this),
             resolveSize: _contextResolveSize.bind(this),
             size: [0, 0]
-            //,cycle: 0
+
         });
         this._contextState = {
             // enumation state for the context
@@ -119,6 +120,7 @@ define(function(require, exports, module) {
         contextState.addCount = 0;
         contextState.removeCount = 0;
         contextState.lastRenderNode = undefined;
+        contextState.enqueuedTransitions = {};
 
         // Prepare content
         context.size[0] = contextData.size[0];
@@ -180,6 +182,7 @@ define(function(require, exports, module) {
         while (node) {
             var modified = node._specModified;
             var spec = node.getSpec();
+            result.ongoingTransition = result.ongoingTransition || !!node._transitionable;
             if (spec.removed) {
 
                 // Destroy node
@@ -618,6 +621,8 @@ define(function(require, exports, module) {
         };
     }
 
+
+
     /**
      * Resolve id into a context-node.
      */
@@ -654,6 +659,16 @@ define(function(require, exports, module) {
     /**
      * Set the node content
      */
+    function _contextTransition(nodeId, transition, callback) {
+        if(!this._nodesById){
+            throw new Error('You cannot create transitions inside a context where nodes are not layouted by ID');
+        }
+        this._contextState.enqueuedTransitions[nodeId] = [transition, callback];
+    }
+
+    /**
+     * Set the node content
+     */
     function _contextSet(contextNodeOrId, set) {
         var contextNode = this._nodesById ? _contextGet.call(this, contextNodeOrId) : contextNodeOrId;
         if (contextNode !== undefined) {
@@ -674,6 +689,10 @@ define(function(require, exports, module) {
                      this._contextState.prevSetIndex = contextNode.index;
                 }
                 node = _contextGetCreateAndOrderNodes.call(this, contextNode.renderNode, contextNode.prev);
+                var transitionInformation = this._contextState.enqueuedTransitions[contextNodeOrId];
+                if(transitionInformation){
+                    node.transition(transitionInformation[0], transitionInformation[1]);
+                }
                 node._viewSequence = contextNode.viewSequence;
                 node._layoutCount++;
                 if (node._layoutCount === 1) {

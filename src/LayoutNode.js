@@ -15,7 +15,7 @@
  */
 define(function (require, exports, module) {
 
-    // import dependencies
+    var Transitionable = require('famous/transitions/Transitionable');
     var Transform = require('famous/core/Transform');
     var LayoutUtility = require('./LayoutUtility');
 
@@ -123,64 +123,91 @@ define(function (require, exports, module) {
     };
 
     /**
+     * Initiates a transition on the layout node
+     * @param transition
+     * @param {Function} onComplete callback when complete
+     */
+    LayoutNode.prototype.transition = function (transition, onComplete) {
+
+        this._originalSet = this._transitionable ?
+            /* If there's already something in progress, then interpolate the current starting position */
+            this._interpolateSet() :
+            /* Otherwise, it's the most recent set */
+            this._lastSet;
+        let transitionable = this._transitionable = new Transitionable(0);
+        transitionable.set(1, transition, () => {
+            /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
+            * because we are finished */
+            if (this._transitionable === transitionable) {
+                delete this._transitionable;
+                this._originalSet = this._targetSet;
+                if(onComplete){
+                    onComplete();
+                }
+            }
+        })
+    };
+
+
+        /**
      * Set the content of the node
      *
      * @param {Object} set
      */
     LayoutNode.prototype.set = function (set, size) {
+
+        var transition = set.transition;
+
+        if (transition) {
+            this._targetSet = set;
+            if (!this._transitionable) {
+                let transitionable = this._transitionable = new Transitionable(0);
+                transitionable.set(1, transition, () => {
+                    /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
+                    * because we are finished */
+                    if (this._transitionable === transitionable) {
+                        delete this._transitionable;
+                        this._originalSet = this._targetSet;
+                    }
+                })
+            }
+        }
+        if (!this._transitionable) {
+            this._originalSet = set;
+        }
+
+        this._lastSet = set;
         this._invalidated = true;
         this._specModified = true;
         this._removing = false;
-        var spec = this._spec;
+        this._modifySpecFromSet(this._spec, set);
+        this.scrollLength = set.scrollLength;
+    };
+
+    LayoutNode.prototype._modifySpecFromSet = function (spec, set) {
         spec.opacity = set.opacity;
-        if (set.size) {
-            if (!spec.size) {
-                spec.size = [0, 0];
-            }
-            spec.size[0] = set.size[0];
-            spec.size[1] = set.size[1];
-        }
-        else {
-            spec.size = undefined;
-        }
-        if (set.origin) {
-            if (!spec.origin) {
-                spec.origin = [0, 0];
-            }
-            spec.origin[0] = set.origin[0];
-            spec.origin[1] = set.origin[1];
-        }
-        else {
-            spec.origin = undefined;
-        }
-        if (set.align) {
-            if (!spec.align) {
-                spec.align = [0, 0];
-            }
-            spec.align[0] = set.align[0];
-            spec.align[1] = set.align[1];
-        }
-        else {
-            spec.align = undefined;
+
+        var propertiesDefaultingToZero = ['size', 'origin', 'align'];
+        for (var i = 0; i < propertiesDefaultingToZero.length; i++) {
+            var propertyName = propertiesDefaultingToZero[i];
+            spec[propertyName] = set[propertyName] ? [set[propertyName][0] || 0, set[propertyName][1] || 0] : undefined;
         }
 
-        this._spec.hide = set.hide;
+        spec.hide = set.hide;
 
         if (set.skew || set.rotate || set.scale) {
-            this._spec.transform = Transform.build({
+            spec.transform = Transform.build({
                 translate: set.translate || [0, 0, 0],
                 skew: set.skew || [0, 0, 0],
                 scale: set.scale || [1, 1, 1],
                 rotate: set.rotate || [0, 0, 0]
             });
         }
-        else if (set.translate) {
-            this._spec.transform = Transform.translate(set.translate[0], set.translate[1], set.translate[2]);
-        }
         else {
-            this._spec.transform = undefined;
+            spec.transform = set.translate ?
+                Transform.translate(set.translate[0], set.translate[1], set.translate[2]) :
+                undefined;
         }
-        this.scrollLength = set.scrollLength;
     };
 
     /**
@@ -189,9 +216,69 @@ define(function (require, exports, module) {
     LayoutNode.prototype.getSpec = function () {
         this._specModified = false;
         this._spec.removed = !this._invalidated;
+        return this._getFinalSpec();
+    };
+
+    /**
+     * Gets the calculated spec based on the time passed, or what the last setting was
+     * @returns {*}
+     * @private
+     */
+    LayoutNode.prototype._getFinalSpec = function () {
+        if (this._transitionable && !this._spec.hide) {
+            if (!this._transitionable.isActive()) {
+                delete this._transitionable;
+            }
+            var spec = {renderNode: this._spec.renderNode};
+            this._modifySpecFromSet(spec, this._interpolateSet());
+            return spec;
+        }
+
         return this._spec;
     };
 
+    var propertiesWithDefaults = {
+        size: [0, 0],
+        origin: [0, 0],
+        align: [0, 0],
+        skew: [0, 0, 0],
+        rotate: [0, 0, 0],
+        scale: [1, 1, 1],
+        translate: [0, 0, 0]
+    };
+
+    /**
+     * Interpolates an ongoing animation
+     * @returns {Object|*}
+     * @private
+     */
+    LayoutNode.prototype._interpolateSet = function () {
+        var tweenValue = this._transitionable.get();
+        if (!this._originalSet || tweenValue === 1) {
+            return this._lastSet;
+        }
+        var resultingSet = {};
+        var tweenToSet = this._lastSet;
+        var tweenFromSet = this._originalSet;
+
+        for(var property in propertiesWithDefaults){
+            var defaultProperty = propertiesWithDefaults[property];
+            var tweenFrom = tweenFromSet[property] || defaultProperty;
+            var tweenTo = tweenToSet[property] || tweenFrom;
+            if(tweenTo === tweenFrom){
+                resultingSet[property] = tweenTo;
+                continue;
+            }
+            this._specModified = true;
+            var numberOfDimensions = defaultProperty.length;
+            /* Clone the property so that we can start from the default setting */
+            let tweenedSet = resultingSet[property] = new Array(numberOfDimensions);
+            for(var dimension = 0;dimension<numberOfDimensions;dimension++){
+                tweenedSet[dimension] = tweenFrom[dimension] + (tweenTo[dimension] - tweenFrom[dimension]) * tweenValue;
+            }
+        }
+        return resultingSet;
+    };
     /**
      * Marks the node for removal
      */

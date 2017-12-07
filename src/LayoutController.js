@@ -163,20 +163,6 @@ define(function (require, exports, module) {
                 dampingRatio: 0.8,
                 period: 300
             }
-            /*insertSpec: {
-             opacity: undefined,
-             size: undefined,
-             transform: undefined,
-             origin: undefined,
-             align: undefined
-             },
-             removeSpec: {
-             opacity: undefined,
-             size: undefined,
-             transform: undefined,
-             origin: undefined,
-             align: undefined
-             }*/
         }
     };
 
@@ -934,7 +920,7 @@ define(function (require, exports, module) {
                 size: size,
             });
         }
-
+        var result;
         // When the size or layout function has changed, reflow the layout
         if ((
                 sizeChanged ||
@@ -1030,7 +1016,8 @@ define(function (require, exports, module) {
             }
 
             // Update output and optionally emit event
-            var result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
+            result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
+
             this._specs = result.specs;
             this._commitOutput.target = result.specs;
             this._eventOutput.emit('layoutend', eventData);
@@ -1039,7 +1026,7 @@ define(function (require, exports, module) {
             });
             this._lastResultUntouched = false;
         }
-        else if (this.options.flow && !this._lastResultUntouched) {
+        else if ((this.options.flow && !this._lastResultUntouched) || this._hasOngoingTransition) {
             // Update output and optionally emit event
             result = this._nodes.buildSpecAndDestroyUnrenderedNodes();
             this._specs = result.specs;
@@ -1051,7 +1038,7 @@ define(function (require, exports, module) {
             }
             this._lastResultUntouched = !result.modified;
         }
-
+        this._hasOngoingTransition = result && result.ongoingTransition;
 
         // Render child-nodes every commit
         var target = this._commitOutput.target;

@@ -119,6 +119,7 @@ define(function(require, exports, module) {
             lineSize[lineDirection] += ((i > 0) ? spacing[lineDirection] : 0) + lineNodes[i].size[lineDirection];
         }
 
+
         // Layout nodes from left to right or top to bottom
         var justifyOffset = justify[lineDirection] ? ((lineLength - lineSize[lineDirection]) / (lineNodes.length * 2)) : 0;
         var lineOffset = (direction ? margins[3] : margins[0]) + justifyOffset;
