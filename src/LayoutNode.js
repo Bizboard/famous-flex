@@ -184,13 +184,25 @@ define(function (require, exports, module) {
         this.scrollLength = set.scrollLength;
     };
 
+    var propertiesWithDefaults = {
+        size: [undefined, undefined],
+        origin: [0, 0],
+        align: [0, 0],
+        skew: [0, 0, 0],
+        rotate: [0, 0, 0],
+        scale: [1, 1, 1],
+        translate: [0, 0, 0],
+        opacity: [0]
+    };
+
     LayoutNode.prototype._modifySpecFromSet = function (spec, set) {
         spec.opacity = set.opacity;
 
-        var propertiesDefaultingToZero = ['size', 'origin', 'align'];
-        for (var i = 0; i < propertiesDefaultingToZero.length; i++) {
-            var propertyName = propertiesDefaultingToZero[i];
-            spec[propertyName] = set[propertyName] ? [set[propertyName][0] || 0, set[propertyName][1] || 0] : undefined;
+        var propertiesWithEasyDefaults = ['size', 'origin', 'align'];
+        for (var i = 0; i < propertiesWithEasyDefaults.length; i++) {
+            var propertyName = propertiesWithEasyDefaults[i];
+            var defaultProperty = propertiesWithDefaults[propertyName];
+            spec[propertyName] = set[propertyName] ? [set[propertyName][0] || defaultProperty[0], set[propertyName][1] || defaultProperty[1]] : undefined;
         }
 
         spec.hide = set.hide;
@@ -219,6 +231,8 @@ define(function (require, exports, module) {
         return this._getFinalSpec();
     };
 
+
+
     /**
      * Gets the calculated spec based on the time passed, or what the last setting was
      * @returns {*}
@@ -234,18 +248,9 @@ define(function (require, exports, module) {
             return spec;
         }
 
-        return this._spec;
-    };
 
-    var propertiesWithDefaults = {
-        size: [0, 0],
-        origin: [0, 0],
-        align: [0, 0],
-        skew: [0, 0, 0],
-        rotate: [0, 0, 0],
-        scale: [1, 1, 1],
-        translate: [0, 0, 0],
-        opacity: [0]
+        return this._spec;
+
     };
 
     /**
