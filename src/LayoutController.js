@@ -99,7 +99,7 @@ define(function (require, exports, module) {
             this.group = new NativeScrollGroup();
         } else if (options.perspective){
             this.group = new Group();
-            this.group.context.setPerspective(1000);
+            this.group.context.setPerspective(500);
         }
 
         if(this.group){
