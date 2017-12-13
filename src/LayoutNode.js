@@ -202,7 +202,10 @@ define(function (require, exports, module) {
         for (var i = 0; i < propertiesWithEasyDefaults.length; i++) {
             var propertyName = propertiesWithEasyDefaults[i];
             var defaultProperty = propertiesWithDefaults[propertyName];
-            spec[propertyName] = set[propertyName] ? [set[propertyName][0] || defaultProperty[0], set[propertyName][1] || defaultProperty[1]] : undefined;
+            spec[propertyName] = set[propertyName] ? [
+                set[propertyName][0] === undefined ? defaultProperty[0] : set[propertyName][0],
+                set[propertyName][1] === undefined ? defaultProperty[1] : set[propertyName][1]
+            ] : undefined;
         }
 
         spec.hide = set.hide;
