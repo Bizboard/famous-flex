@@ -135,6 +135,9 @@ define(function (require, exports, module) {
             /* Otherwise, it's the most recent set */
             this._lastSet;
         let transitionable = this._transitionable = new Transitionable(0);
+        if(!transition.duration){
+            transition.duration = 200;
+        }
         transitionable.set(1, transition, () => {
             /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
             * because we are finished */
@@ -149,7 +152,7 @@ define(function (require, exports, module) {
     };
 
 
-        /**
+    /**
      * Set the content of the node
      *
      * @param {Object} set
