@@ -195,7 +195,7 @@ define(function (require, exports, module) {
         rotate: [0, 0, 0],
         scale: [1, 1, 1],
         translate: [0, 0, 0],
-        opacity: [0]
+        opacity: [1]
     };
 
     LayoutNode.prototype._modifySpecFromSet = function (spec, set) {
