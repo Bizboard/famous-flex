@@ -24,6 +24,8 @@ define(function(require, exports, module) {
     var RenderNode = require('famous/core/RenderNode');
     var Timer = require('famous/utilities/Timer');
     var Easing = require('famous/transitions/Easing');
+    var Group = require('famous/core/Group');
+
 
     /**
      * @class
@@ -754,16 +756,23 @@ define(function(require, exports, module) {
                 item.options.hide.animation = options.animation;
             }
         }
+        var group = new Group();
+        group.add(renderable);
         item = {
-            view: renderable,
+            view: group,
             mod: new StateModifier(),
             state: ItemState.QUEUED,
             callback: callback,
             transferables: [], // renderables currently being transfered
             wait: options ? options.wait : undefined
         };
-        item.node = new RenderNode(item.mod);
-        item.node.add(renderable);
+
+        var renderNode =  new RenderNode(item.mod);
+        // renderNode.add(renderable);
+        item.node = renderNode;
+        renderNode.add(group);
+        // group.add(renderNode);
+
         _setItemOptions.call(this, item, options, callback);
         item.hideCallback = function() {
             item.hideCallback = undefined;
