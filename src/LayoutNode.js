@@ -134,7 +134,7 @@ define(function (require, exports, module) {
             this._interpolateSet() :
             /* Otherwise, it's the most recent set */
             this._lastSet;
-        let transitionable = this._transitionable = new Transitionable(0);
+        var transitionable = this._transitionable = new Transitionable(0);
         if(!transition.duration){
             transition.duration = 200;
         }
@@ -164,8 +164,8 @@ define(function (require, exports, module) {
         if (transition) {
             this._targetSet = set;
             if (!this._transitionable) {
-                let transitionable = this._transitionable = new Transitionable(0);
-                transitionable.set(1, transition, () => {
+                var transitionable = this._transitionable = new Transitionable(0);
+                transitionable.set(1, transition, function()  {
                     /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
                     * because we are finished */
                     if (this._transitionable === transitionable) {
