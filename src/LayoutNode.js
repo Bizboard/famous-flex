@@ -138,7 +138,7 @@ define(function (require, exports, module) {
         if(!transition.duration){
             transition.duration = 200;
         }
-        transitionable.set(1, transition, () => {
+        transitionable.set(1, transition, function() {
             /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
             * because we are finished */
             if (this._transitionable === transitionable) {
@@ -286,7 +286,7 @@ define(function (require, exports, module) {
             this._specModified = true;
             var numberOfDimensions = defaultProperty.length;
             /* Clone the property so that we can start from the default setting */
-            let tweenedSet = resultingSet[property] = new Array(numberOfDimensions);
+            var tweenedSet = resultingSet[property] = new Array(numberOfDimensions);
             for(var dimension = 0;dimension<numberOfDimensions;dimension++){
                 tweenedSet[dimension] = tweenFrom[dimension] + (tweenTo[dimension] - tweenFrom[dimension]) * tweenValue;
             }
