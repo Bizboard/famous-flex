@@ -138,17 +138,23 @@ define(function (require, exports, module) {
         if(!transition.duration){
             transition.duration = 200;
         }
-        transitionable.set(1, transition, function() {
+
+        var callback = (function(isImmediate) {
             /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
             * because we are finished */
             if (this._transitionable === transitionable) {
                 delete this._transitionable;
                 this._originalSet = this._targetSet;
                 if(onComplete){
-                    onComplete();
+                    onComplete(isImmediate);
                 }
             }
-        })
+        }).bind(this);
+        if(!this._originalSet){
+            callback(true);
+        } else {
+            transitionable.set(1, transition, callback);
+        }
     };
 
 
@@ -159,22 +165,6 @@ define(function (require, exports, module) {
      */
     LayoutNode.prototype.set = function (set, size) {
 
-        var transition = set.transition;
-
-        if (transition) {
-            this._targetSet = set;
-            if (!this._transitionable) {
-                var transitionable = this._transitionable = new Transitionable(0);
-                transitionable.set(1, transition, function()  {
-                    /* If the transitionable wasn't replaced by another transitionable, then delete the transitionable
-                    * because we are finished */
-                    if (this._transitionable === transitionable) {
-                        delete this._transitionable;
-                        this._originalSet = this._targetSet;
-                    }
-                })
-            }
-        }
         if (!this._transitionable) {
             this._originalSet = set;
         }
@@ -246,9 +236,6 @@ define(function (require, exports, module) {
      */
     LayoutNode.prototype._getFinalSpec = function () {
         if (this._transitionable && !this._spec.hide) {
-            if (!this._transitionable.isActive()) {
-                delete this._transitionable;
-            }
             var spec = {renderNode: this._spec.renderNode};
             this._modifySpecFromSet(spec, this._interpolateSet());
             return spec;
@@ -266,7 +253,9 @@ define(function (require, exports, module) {
      */
     LayoutNode.prototype._interpolateSet = function () {
         var tweenValue = this._transitionable.get();
-        if (!this._originalSet || tweenValue === 1) {
+        if (!this._originalSet || tweenValue === 1 || !this._transitionable.isActive()) {
+            this._transitionable.get(); // Run again to make sure that the callback can run
+            delete this._transitionable;
             return this._lastSet;
         }
         var resultingSet = {};
@@ -291,7 +280,7 @@ define(function (require, exports, module) {
                 tweenedSet[dimension] = tweenFrom[dimension] + (tweenTo[dimension] - tweenFrom[dimension]) * tweenValue;
             }
         }
-        resultingSet.opacity = resultingSet.opacity[0];
+        resultingSet.opacity = resultingSet.opacity[0] || resultingSet.opacity;
         return resultingSet;
     };
     /**
