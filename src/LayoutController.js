@@ -304,7 +304,7 @@ define(function (require, exports, module) {
             this._viewSequence = dataSource;
         }
         else if (dataSource.getNext) {
-            this._viewSequence = dataSource;
+            this._viewSequence = dataSource
         }
         else if (dataSource instanceof Object) {
             this._nodesById = dataSource;
@@ -1095,7 +1095,7 @@ define(function (require, exports, module) {
         if (this.options.flow) {
             this._resetFlowState = true;
         }
-        this._isDisplaying = false;
+        this._isDisplaying = false
     };
 
 
